@@ -18,19 +18,26 @@ public class Basket {
                 .peek(record -> record.addItems(count))
                 .findAny()
                 .isPresent();
+
         if (!productInBasket) {
             basketRecords.add(new BasketRecord(product, count));
         }
     }
 
-    public Map<Product, Long> getItemCounts() {
+    Map<Product, Long> getItemCounts() {
         return basketRecords.stream()
                 .collect(Collectors.toMap(BasketRecord::getProduct, BasketRecord::getCount));
     }
 
     public BigDecimal getValue() {
         return basketRecords.stream()
-                .map(record -> record.getProduct().getPrice().multiply(BigDecimal.valueOf(record.getCount())))
+                .map(this::calculateItemValue)
                 .reduce(BigDecimal.valueOf(0), BigDecimal::add);
+    }
+
+    private BigDecimal calculateItemValue(BasketRecord record) {
+        BigDecimal itemCount = BigDecimal.valueOf(record.getCount());
+        return record.getProduct()
+                .getPrice().multiply(itemCount);
     }
 }
