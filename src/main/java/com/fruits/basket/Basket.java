@@ -1,18 +1,22 @@
 package com.fruits.basket;
 
 import com.fruits.domain.Product;
+import com.google.common.collect.Lists;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.text.MessageFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Basket {
 
+    private static final Collection<String> KNOWN_PRODUCTS = Collections.unmodifiableCollection(Lists.newArrayList("Bananas", "Oranges", "Apples", "Lemons", "Peaches"));
+
     private List<BasketRecord> basketRecords = new ArrayList<>();
 
     public void addItem(Product product, long count) {
+        validateProduct(product);
+
         boolean productInBasket = basketRecords.stream()
                 .filter(records -> records.getProduct().equals(product))
                 .peek(record -> record.addItems(count))
@@ -21,6 +25,13 @@ public class Basket {
 
         if (!productInBasket) {
             basketRecords.add(new BasketRecord(product, count));
+        }
+    }
+
+    private void validateProduct(Product product) {
+        if (!KNOWN_PRODUCTS.contains(product.getName())) {
+            String exceptionMessage = MessageFormat.format("Cannot add \"{0}\" to the basket as is not allowed.", product.getName());
+            throw new IllegalArgumentException(exceptionMessage);
         }
     }
 
