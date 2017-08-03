@@ -49,6 +49,7 @@ public class Basket {
     private BigDecimal calculateItemValue(BasketRecord record) {
         BigDecimal itemCount = BigDecimal.valueOf(record.getCount());
         return record.getProduct()
-                .getPrice().multiply(itemCount);
+                .getPrice()
+                .multiply(itemCount);
     }
 }
