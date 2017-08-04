@@ -17,15 +17,19 @@ public class Basket {
     public void addItem(Product product, long count) {
         validateProduct(product);
 
-        boolean productInBasket = basketRecords.stream()
-                .filter(records -> records.getProduct().equals(product))
-                .peek(record -> record.addItems(count))
-                .findAny()
-                .isPresent();
+        boolean productInBasket = increaseCountIfInBasket(product, count);
 
         if (!productInBasket) {
             basketRecords.add(new BasketRecord(product, count));
         }
+    }
+
+    private boolean increaseCountIfInBasket(Product product, long count) {
+        return basketRecords.stream()
+                    .filter(records -> records.getProduct().equals(product))
+                    .peek(record -> record.addItems(count))
+                    .findAny()
+                    .isPresent();
     }
 
     private void validateProduct(Product product) {
